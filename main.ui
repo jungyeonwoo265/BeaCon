@@ -24,10 +24,10 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="page">
-     <widget class="QPushButton" name="pt_login">
+     <widget class="QPushButton" name="pb_loginpage">
       <property name="geometry">
        <rect>
         <x>180</x>
@@ -40,7 +40,7 @@
        <string>로그인</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pt_beacon">
+     <widget class="QPushButton" name="pb_beacon">
       <property name="geometry">
        <rect>
         <x>450</x>
@@ -66,7 +66,7 @@
        <string>HOME</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_4">
+     <widget class="QLabel" name="lb_id">
       <property name="geometry">
        <rect>
         <x>590</x>
@@ -81,7 +81,7 @@
      </widget>
     </widget>
     <widget class="QWidget" name="page_2">
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLineEdit" name="le_id">
       <property name="geometry">
        <rect>
         <x>330</x>
@@ -127,7 +127,7 @@
        <string>password</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="pb_login_2">
       <property name="geometry">
        <rect>
         <x>480</x>
