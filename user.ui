@@ -383,7 +383,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>글일훈련</string>
+      <string>금일훈련</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_15">
@@ -1056,6 +1056,9 @@
        </property>
        <property name="gridVisible">
         <bool>false</bool>
+       </property>
+       <property name="verticalHeaderFormat">
+        <enum>QCalendarWidget::NoVerticalHeader</enum>
        </property>
        <property name="navigationBarVisible">
         <bool>false</bool>
