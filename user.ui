@@ -958,7 +958,7 @@
       <string>월</string>
      </property>
     </widget>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="tab_page3">
      <property name="geometry">
       <rect>
        <x>100</x>
@@ -968,7 +968,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -1099,7 +1099,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
-    <widget class="QTabWidget" name="tabWidget_2">
+    <widget class="QTabWidget" name="tab_page4">
      <property name="geometry">
       <rect>
        <x>20</x>
