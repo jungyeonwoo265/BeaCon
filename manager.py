@@ -26,7 +26,6 @@ class Manager(QMainWindow, form_class):
         self.pb_home_page2.clicked.connect(self.go_home)
         self.pb_home_page3.clicked.connect(self.go_home)
         self.pb_home_page4.clicked.connect(self.go_home)
-        # self.open_event()
 
     def page_move(self):
         page = self.cb_menu.currentText()
@@ -50,14 +49,6 @@ class Manager(QMainWindow, form_class):
     def open_db(self):
         self.conn = p.connect(host='127.0.0.1', port=3306, user='root', password='0000', db='step6', charset='utf8')
         self.c = self.conn.cursor()
-
-    # def open_event(self):
-    #     self.open_db()
-    #     # self.c.execute(f'select * from calendar where training = curdate()')
-    #     self.c.execute(f'select * from calendar where training = subdate(curdate(),1)')
-    #     check = self.c.fetchone()
-    #     print(check, 'manager')
-    #     self.conn.close()
 
 
 if __name__ == "__main__":

@@ -31,22 +31,6 @@ class WindowClass(QMainWindow, form_class):
         self.pb_loginpage.clicked.connect(self.go_login)
         self.pb_login_2.clicked.connect(self.login)
         self.pb_beacon.clicked.connect(self.program)
-        # self.open_event()
-
-    # def open_event(self):
-    #     training = list()
-    #     self.open_db()
-    #     self.c.execute('select * from calendar where training = subdate(curdate(),1);')
-    #     check = self.c.fetchone()
-    #     for i in check:
-    #         if i == self.yesterday.strftime("%Y-%m-%d"):
-    #             training.append(i)
-    #         elif i == '퇴실' or i == '출석':
-    #             training.append('출석')
-    #         else:
-    #             training.append('결석')
-    #     print(training)
-    #     self.conn.close()
 
     def open_db(self):
         self.conn = p.connect(host='127.0.0.1', port=3306, user='root', password='0000', db='step6', charset='utf8')
