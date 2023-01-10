@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5 import QtWidgets
 import pymysql as p
+from datetime import datetime, timedelta
 from user import User
 from manager import Manager
 
@@ -24,25 +25,39 @@ class WindowClass(QMainWindow, form_class):
         self.name = str
         self.login_state = False
         self.login_manager = False
+        self.yesterday = datetime.now() - timedelta(1)
 
         # 시그널-메서드
         self.pb_loginpage.clicked.connect(self.go_login)
         self.pb_login_2.clicked.connect(self.login)
         self.pb_beacon.clicked.connect(self.program)
+        # self.open_event()
+
+    # def open_event(self):
+    #     training = list()
+    #     self.open_db()
+    #     self.c.execute('select * from calendar where training = subdate(curdate(),1);')
+    #     check = self.c.fetchone()
+    #     for i in check:
+    #         if i == self.yesterday.strftime("%Y-%m-%d"):
+    #             training.append(i)
+    #         elif i == '퇴실' or i == '출석':
+    #             training.append('출석')
+    #         else:
+    #             training.append('결석')
+    #     print(training)
+    #     self.conn.close()
 
     def open_db(self):
         self.conn = p.connect(host='127.0.0.1', port=3306, user='root', password='0000', db='step6', charset='utf8')
         self.c = self.conn.cursor()
-        # self.c.execute(f' 쿼리문 ')
-        # self.conn.commit
-        # self.conn.close
 
     def program(self):
         if self.login_manager and self.login_state:
-            user.set_information(self.name)
+            user_page.set_information(self.name)
             widget.setCurrentIndex(2)
         elif self.login_state:
-            manager.set_information(self.name)
+            manager_page.set_information(self.name)
             widget.setCurrentIndex(1)
         else:
             QMessageBox.information(self, '안내창', '로그인 하세요')
@@ -73,18 +88,18 @@ class WindowClass(QMainWindow, form_class):
                 self.le_id.clear()
                 self.le_pw.clear()
                 self.name = check[0]
-                self.lb_id.setText(f'{self.name}님 안녕하세요.')
+                self.lb_id.setText(f'{self.name}님 안녕 하세요.')
                 self.login_state = True
-                self.pb_loginpage.setText('로그아웃')
+                self.pb_loginpage.setText('로그 아웃')
                 self.go_home()
             elif manager and not check:
                 self.le_id.clear()
                 self.le_pw.clear()
                 self.name = manager[0]
-                self.lb_id.setText(f'{self.name}님 안녕하세요.')
+                self.lb_id.setText(f'{self.name}님 안녕 하세요.')
                 self.login_state = True
                 self.login_manager = True
-                self.pb_loginpage.setText('로그아웃')
+                self.pb_loginpage.setText('로그 아웃')
                 self.go_home()
             else:
                 QMessageBox.information(self, '안내창', 'login 실패')
@@ -103,13 +118,13 @@ if __name__ == "__main__":
 
     widget = QtWidgets.QStackedWidget()
 
-    main = WindowClass()
-    user = User()
-    manager = Manager()
+    main_page = WindowClass()
+    user_page = User()
+    manager_page = Manager()
 
-    widget.addWidget(main)
-    widget.addWidget(user)
-    widget.addWidget(manager)
+    widget.addWidget(main_page)
+    widget.addWidget(user_page)
+    widget.addWidget(manager_page)
 
     # myWindow = WindowClass()
     # myWindow.show()

@@ -143,7 +143,7 @@
       <string>통합심사과정훈련</string>
      </property>
     </widget>
-    <widget class="QComboBox" name="cob_menu_page1">
+    <widget class="QComboBox" name="cb_menu">
      <property name="geometry">
       <rect>
        <x>650</x>
