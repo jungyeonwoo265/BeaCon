@@ -438,6 +438,42 @@
       <string>문자 *</string>
      </property>
     </widget>
+    <widget class="QRadioButton" name="rb_common">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>700</y>
+       <width>90</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>common</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="rb_test">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>730</y>
+       <width>90</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>test</string>
+     </property>
+    </widget>
+    <widget class="QDateTimeEdit" name="dte_test">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>730</y>
+       <width>194</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="page_2">
     <widget class="QLabel" name="lb_attendance_page2">
