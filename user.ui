@@ -971,7 +971,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -1038,7 +1038,7 @@
         <enum>QCalendarWidget::NoVerticalHeader</enum>
        </property>
        <property name="navigationBarVisible">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="dateEditEnabled">
         <bool>true</bool>
