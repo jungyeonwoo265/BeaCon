@@ -900,67 +900,6 @@
       <string>출석일</string>
      </property>
     </widget>
-    <widget class="QComboBox" name="cb_year_page3">
-     <property name="geometry">
-      <rect>
-       <x>210</x>
-       <y>250</y>
-       <width>76</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>2022</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>2023</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QComboBox" name="cb_month_page3">
-     <property name="geometry">
-      <rect>
-       <x>320</x>
-       <y>250</y>
-       <width>76</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>01</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QLabel" name="label_54">
-     <property name="geometry">
-      <rect>
-       <x>290</x>
-       <y>250</y>
-       <width>31</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>년</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_55">
-     <property name="geometry">
-      <rect>
-       <x>400</x>
-       <y>250</y>
-       <width>31</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>월</string>
-     </property>
-    </widget>
     <widget class="QTabWidget" name="tab_page3">
      <property name="geometry">
       <rect>
@@ -1112,7 +1051,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -1131,7 +1070,7 @@
         <enum>QCalendarWidget::NoVerticalHeader</enum>
        </property>
        <property name="navigationBarVisible">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="dateEditEnabled">
         <bool>true</bool>
@@ -1153,67 +1092,6 @@
        </property>
       </widget>
      </widget>
-    </widget>
-    <widget class="QLabel" name="label_57">
-     <property name="geometry">
-      <rect>
-       <x>340</x>
-       <y>590</y>
-       <width>31</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>년</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_58">
-     <property name="geometry">
-      <rect>
-       <x>450</x>
-       <y>590</y>
-       <width>31</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>월</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="cb_year_page4">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>590</y>
-       <width>76</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>2022</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>2023</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QComboBox" name="cb_month_page4">
-     <property name="geometry">
-      <rect>
-       <x>370</x>
-       <y>590</y>
-       <width>76</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>01</string>
-      </property>
-     </item>
     </widget>
     <widget class="QLineEdit" name="le_input_page4">
      <property name="geometry">

@@ -1,4 +1,6 @@
 import sys
+
+from PyQt5.QtCore import QDate
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import pymysql as p
@@ -16,7 +18,8 @@ class User(QMainWindow, form_class):
         self.c = self.conn.cursor()
         self.conn.close()
 
-        # page1 self.변수 초기화 및 선언
+        #self.변수 초기화 및 선언
+        # page1
         self.check_class = False
         self.time = 'curtime()'
         self.date = 'curdate()'
@@ -24,8 +27,13 @@ class User(QMainWindow, form_class):
         self.state = tuple
         # main.py 연결시 주석 처리
         self.set_information('고연재')
-
         self.reset()
+        # page3
+        self.table_page3.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_page3.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # page4
+        self.table_page4.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_page4.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # 시그널 - 메서드
         self.cb_menu.currentIndexChanged.connect(self.page_move)
@@ -38,7 +46,29 @@ class User(QMainWindow, form_class):
         self.pb_outing.clicked.connect(self.outing)
         self.pb_outing.clicked.connect(self.push_chang)
 
-    # 페이지3 이동시 초기화 및 이벤트 핸들러로 self.page3_month() 호출
+    # 페이지4 이동시 초기화
+    def reset_page4(self):
+        self.open_db()
+        # 리스트 보기
+        self.c.execute(f'select count(*) from calendar where 이름 ="{self.name}"')
+        num = self.c.fetchone()[0]
+        if num:
+            self.c.execute(f'select 날짜, 일정 from calender where 이름 ="{self.name} and 날짜 > {self.date} order by 날짜"')
+            cal = self.c.fetchall()
+            self.table_page4.setRowCount(len(cal))
+            self.table_page4.setColumnCount(len(cal[0]))
+            for idx, le in enumerate(cal):
+                for j, v in enumerate(le):
+                    self.table_page4.setItem(idx, j, QTableWidgetItem(v))
+        # 캘리더 제한하기
+        self.c.execute(f'select {self.date},max(날짜) from schedule;')
+        date = self.c.fetchone()
+        day1 = QDate.fromString(str(date[0]), "yyyy-MM-dd")
+        day2 = QDate.fromString(date[1], "yyyy-MM-dd")
+        self.calendar_page4.setDateRange(day1, day2)
+        self.conn.close()
+
+    # 페이지3 이동시 초기화
     def reset_page3(self):
         self.open_db()
         # 출석일 구하기
@@ -47,34 +77,21 @@ class User(QMainWindow, form_class):
         self.c.execute(f'select count(*) from (select 날짜 from schedule group by 날짜) as t;')
         total = self.c.fetchone()[0]
         self.lb_attendance_rate_page3.setText(f'{attendance}/{total}')
-        # 나의 출석 정보 콤보 박스 년,월 셋팅
-        self.cb_year_page3.clear()
-        self.c.execute(f'select year(min(날짜)),year(max(날짜)) from attendance where 이름 = "{self.name}";')
-        year = self.c.fetchone()
-        for idx, y in enumerate(year):
-            self.cb_year_page3.insertItem(idx, str(y))
+        # 리스트 보여주기
+        self.c.execute(f'select 날짜, if(출석 ="y", "출석", "결석") from attendance where 이름 ="{self.name}";')
+        p3_calendar = self.c.fetchall()
+        self.table_page3.setRowCount(len(p3_calendar))
+        self.table_page3.setColumnCount(len(p3_calendar[0]))
+        for idx, le in enumerate(p3_calendar):
+            for j, v in enumerate(le):
+                self.table_page3.setItem(idx, j, QTableWidgetItem(v))
+        # 캘린더 제한 하기
+        self.c.execute(f'select min(날짜),max(날짜) from attendance where 이름 ="{self.name}";')
+        date = self.c.fetchone()
+        day1 = QDate.fromString(date[0], "yyyy-MM-dd")
+        day2 = QDate.fromString(date[1], "yyyy-MM-dd")
+        self.calendar_page3.setDateRange(day1, day2)
         self.conn.close()
-        self.page3_month()
-        self.cb_year_page3.currentIndexChanged.connect(self.page3_month)
-        # self.page3_calender()
-
-    # page3 년도 콤보 박스 변경시 월 콤보 박스 셋팅
-    def page3_month(self):
-        self.cb_month_page3.clear()
-        year = self.cb_year_page3.currentText()
-        self.open_db()
-        self.c.execute(f'select month(min(날짜)),month(max(날짜)) from attendance where 날짜 like "{year}%" and 이름 = "{self.name}";')
-        month = self.c.fetchone()
-        for i, m in enumerate(range(month[0], month[1]+1)):
-            self.cb_month_page3.insertItem(i, str(m))
-        self.conn.close()
-        self.cb_year_page3.currentIndexChanged.connect(self.page3_calender)
-        self.cb_month_page3.currentIndexChanged.connect(self.page3_calender)
-
-    def page3_calender(self):
-        year = self.cb_year_page3.currentText()
-        month = self.cb_month_page3.currentText()
-        self.calendar_page3.setCurrentPage(int(year), int(month))
 
     # 페이지2 이동시 초기화
     def reset_page2(self):
@@ -90,7 +107,7 @@ class User(QMainWindow, form_class):
         self.c.execute(f'select count(*) from attendance where 이름 = "{self.name}" and 외출!="";')
         self.lb_outing_page2.setText(str(self.c.fetchone()[0]))
         self.c.execute(f'select count(*) from attendance where 이름 = "{self.name}" and 결석="y";')
-        absent =self.c.fetchone()[0]
+        absent = self.c.fetchone()[0]
         self.lb_absent_page2.setText(f'{absent}')
         self.lb_total_absent_num.setText(f'{absent}')
         # 나의 출석률, 과정 진행률 구하기
@@ -272,6 +289,7 @@ class User(QMainWindow, form_class):
             self.reset_page3()
             self.stackedWidget.setCurrentIndex(2)
         elif page == '개인 일정':
+            self.reset_page4()
             self.stackedWidget.setCurrentIndex(3)
         elif page == '메신저':
             self.stackedWidget.setCurrentIndex(4)
