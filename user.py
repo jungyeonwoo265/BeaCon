@@ -1,6 +1,7 @@
 import sys
 
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, Qt
+from PyQt5.QtGui import QTextCharFormat
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import pymysql as p
@@ -18,23 +19,22 @@ class User(QMainWindow, form_class):
         self.c = self.conn.cursor()
         self.conn.close()
 
-        #self.변수 초기화 및 선언
+        # self.변수 초기화 및 선언
         # page1
         self.check_class = False
         self.time = 'curtime()'
         self.date = 'curdate()'
         self.name = str
         self.state = tuple
-        # main.py 연결시 주석 처리
-        self.set_information('고연재')
         self.reset()
+        # main.py 연결시 주석 처리
+        # self.set_information('최지혁')
         # page3
         self.table_page3.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_page3.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         # page4
         self.table_page4.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_page4.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
         # 시그널 - 메서드
         self.cb_menu.currentIndexChanged.connect(self.page_move)
         self.pb_home_page2.clicked.connect(self.go_home)
@@ -45,27 +45,107 @@ class User(QMainWindow, form_class):
         self.pb_check.clicked.connect(self.push_chang)
         self.pb_outing.clicked.connect(self.outing)
         self.pb_outing.clicked.connect(self.push_chang)
+        self.pb_input.clicked.connect(self.input_page4)
+        self.pb_delet_page4.clicked.connect(self.output_page4)
+        self.le_input_page5.returnPressed.connect(self.input_page5)
+        self.pb_delet_page5.clicked.connect(self.output_page5)
+
+    # page5 메세지 삭제
+    def output_page5(self):
+        text = self.list_page5.currentItem().text()
+        if text:
+            message = text.split('/')
+            self.open_db()
+            self.c.execute(f'delete from messenger where 보냄="{message[0].strip()}" and 시간="{message[1].strip()}" and 날짜=curdate();')
+            self.conn.commit()
+            self.conn.close()
+            self.reset_page5()
+
+    # page5 메세지 등록
+    def input_page5(self):
+        text = self.le_input_page5.text()
+        self.le_input_page5.clear()
+        if text:
+            self.open_db()
+            self.c.execute(f'insert into messenger values (curdate(),"{self.name}", "이상복", curtime(), "{text}", "n");')
+            self.conn.commit()
+            self.conn.close()
+        self.reset_page5()
+
+    # page5 이동시 초기화
+    def reset_page5(self):
+        self.list_page5.clear()
+        self.open_db()
+        self.c.execute(f'select 보냄, 시간, 내용 from messenger where 날짜 > subdate({self.date},1) and (보냄 ="{self.name}" or 받음="{self.name}") order by 날짜;')
+        message = self.c.fetchall()
+        for i in message:
+            self.list_page5.addItem(f'{i[0]} / {i[1]} / {i[2]}')
+        self.conn.close()
 
     # 페이지4 이동시 초기화
     def reset_page4(self):
         self.open_db()
-        # 리스트 보기
-        self.c.execute(f'select count(*) from calendar where 이름 ="{self.name}"')
-        num = self.c.fetchone()[0]
-        if num:
-            self.c.execute(f'select 날짜, 일정 from calender where 이름 ="{self.name} and 날짜 > {self.date} order by 날짜"')
-            cal = self.c.fetchall()
-            self.table_page4.setRowCount(len(cal))
-            self.table_page4.setColumnCount(len(cal[0]))
-            for idx, le in enumerate(cal):
-                for j, v in enumerate(le):
-                    self.table_page4.setItem(idx, j, QTableWidgetItem(v))
         # 캘리더 제한하기
         self.c.execute(f'select {self.date},max(날짜) from schedule;')
         date = self.c.fetchone()
         day1 = QDate.fromString(str(date[0]), "yyyy-MM-dd")
         day2 = QDate.fromString(date[1], "yyyy-MM-dd")
         self.calendar_page4.setDateRange(day1, day2)
+        self.conn.close()
+        self.tableset_page4()
+
+    # page4 일정 삭제 하기
+    def output_page4(self):
+        row = self.table_page4.currentRow()
+        if row >= 0:
+            date = self.table_page4.item(row, 0).text()
+            text = self.table_page4.item(row, 1).text()
+            style1 = QTextCharFormat()
+            style1.setBackground(Qt.white)
+            cal_st = QDate.fromString(date, "yyyy-MM-dd")
+            self.calendar_page4.setDateTextFormat(cal_st, style1)
+            self.open_db()
+            self.c.execute(f'delete from calendar where 일정 ="{date}" and 내역 = "{text}" and 이름 = "{self.name}";')
+            self.conn.commit()
+            self.conn.close()
+            self.tableset_page4()
+
+    # page4 일정 추가 버튼 누를면 일정 추가 하고 리스트 보기 셋팅
+    def input_page4(self):
+        text = self.le_input_page4.text()
+        date = self.calendar_page4.selectedDate().toString('yyyy-MM-dd')
+        self.open_db()
+        if text:
+            self.c.execute(f'insert into calendar values (now(),"{self.name}", "{date}", "{text}");')
+        self.conn.commit()
+        self.conn.close()
+        self.le_input_page4.clear()
+        self.tableset_page4()
+
+    # page4 리스트 보기 table widget 셋팅 + 캘린더 스타일 변경 추가
+    def tableset_page4(self):
+        self.open_db()
+        # 리스트 보기
+        self.c.execute(f'select count(*) from calendar where 이름 ="{self.name}"')
+        num = self.c.fetchone()[0]
+        if num:
+            # 캘린더 스타일 변경
+            style1 = QTextCharFormat()
+            style1.setBackground(Qt.yellow)
+            self.c.execute(f'select 일정, 내역 from calendar where 이름 ="{self.name}" '
+                           f'and 일정 > subdate({self.date},1) order by 일정')
+            cal = self.c.fetchall()
+            self.table_page4.setRowCount(len(cal))
+            self.table_page4.setColumnCount(len(cal[0]))
+            for idx, le in enumerate(cal):
+                cal_st = QDate.fromString(le[0], "yyyy-MM-dd")
+                self.calendar_page4.setDateTextFormat(cal_st, style1)
+                for j, v in enumerate(le):
+                    self.table_page4.setItem(idx, j, QTableWidgetItem(v))
+        else:
+            self.table_page4.clear()
+            self.table_page4.setRowCount(0)
+            self.table_page4.setColumnCount(0)
         self.conn.close()
 
     # 페이지3 이동시 초기화
@@ -91,6 +171,20 @@ class User(QMainWindow, form_class):
         day1 = QDate.fromString(date[0], "yyyy-MM-dd")
         day2 = QDate.fromString(date[1], "yyyy-MM-dd")
         self.calendar_page3.setDateRange(day1, day2)
+        # 캘린더 스타일 변경하기
+        style1 = QTextCharFormat()
+        style1.setForeground(Qt.black)
+        style1.setBackground(Qt.yellow)
+        style2 = QTextCharFormat()
+        style2.setForeground(Qt.black)
+        style2.setBackground(Qt.red)
+        for i in p3_calendar:
+            if i[1] == '출석':
+                cal_st = QDate.fromString(i[0], "yyyy-MM-dd")
+                self.calendar_page3.setDateTextFormat(cal_st, style1)
+            elif i[1] == '결석':
+                cal_st = QDate.fromString(i[0], "yyyy-MM-dd")
+                self.calendar_page3.setDateTextFormat(cal_st, style2)
         self.conn.close()
 
     # 페이지2 이동시 초기화
@@ -159,11 +253,11 @@ class User(QMainWindow, form_class):
                 self.c.execute(f'select 퇴실, "16:00:00"-입실, "17:00:00"- 퇴실 '
                                f'from attendance where 날짜 = subdate({self.date},1) and 이름 = "{i[0]}";')
                 data = self.c.fetchone()
-                # 수업 4시간 이상, 일찍 퇴실한 경우
-                if data[1] >= 4 and data[2] > 0:
+                # 수업 4시간 이상, 일찍 퇴실, 퇴실을 찍지 않은 경우
+                if data[1] >= 4 and data[2] > 0 and data[0] != "":
                     self.c.execute(f'update attendance set 조퇴="y" where 날짜 = subdate({self.date},1) and 이름 = "{i[0]}";')
-                # 정상 퇴실, 수업 4시간 이상
-                elif data[0] >= '17:01:00' and data[1] >= 4:
+                # 정상 퇴실, 수업 4시간 이상, 퇴실을 찍지 않은 경우
+                elif data[0] >= '17:01:00' and data[1] >= 4 and data[0] != "":
                     self.c.execute(f'update attendance set 출석="y" where 날짜 = subdate({self.date},1) and 이름 = "{i[0]}";')
                 # 나머진 결석 처리
                 else:
@@ -178,9 +272,8 @@ class User(QMainWindow, form_class):
         self.check_schecule()
         self.roster()
         self.result()
-        self.early()
-        self.push_chang()
         self.time_set()
+        self.early()
 
     # 외출 버튼 클릭시 DB에 시간 저장
     def outing(self):
@@ -190,7 +283,7 @@ class User(QMainWindow, form_class):
         self.conn.commit()
         self.conn.close()
 
-    # 출석 체크버튼 클릭시 DB에 시간 저장
+    # 출석 체크시 DB에 시간 저장
     def check(self):
         state = self.pb_check.text()
         self.open_db()
@@ -201,18 +294,6 @@ class User(QMainWindow, form_class):
         elif state == '퇴실':
             self.c.execute(f'update attendance set 퇴실 = {self.time} where 이름 = "{self.name}" and 날짜 = {self.date};')
         self.conn.commit()
-        self.conn.close()
-
-    # 전체 공지를 띄우는 기능
-    def early(self):
-        self.open_db()
-        self.c.execute('select count(*) from notice where 상태 = "y";')
-        count = self.c.fetchone()
-        if count[0]:
-            self.c.execute('select 내용 from notice where 상태 = "y";')
-            self.lb_notice.setText(self.c.fetchone()[0])
-        else:
-            self.lb_notice.setText('')
         self.conn.close()
 
     # 출석 체크를 위해 시간및 버튼의 텍스트 변경
@@ -261,6 +342,19 @@ class User(QMainWindow, form_class):
             self.lb_comeback.setText('')
             self.lb_leave.setText('')
 
+    # 전체 공지
+    def early(self):
+        self.open_db()
+        self.c.execute('select count(*) from notice where 상태 = "y";')
+        count = self.c.fetchone()
+        if count[0]:
+            self.c.execute('select 내용 from notice where 상태 = "y";')
+            noti = self.c.fetchone()[0]
+            self.lb_notice.setText(noti)
+        else:
+            self.lb_notice.setText('')
+        self.conn.close()
+
     # 금일 수업 시간 라벨에 넣기
     def time_set(self):
         if self.check_class:
@@ -281,6 +375,7 @@ class User(QMainWindow, form_class):
         page = self.cb_menu.currentText()
         self.cb_menu.setCurrentIndex(0)
         if page == '...':
+            self.push_chang()
             self.stackedWidget.setCurrentIndex(0)
         elif page == '나의 출결 및 진도 현황':
             self.reset_page2()
@@ -292,6 +387,7 @@ class User(QMainWindow, form_class):
             self.reset_page4()
             self.stackedWidget.setCurrentIndex(3)
         elif page == '메신저':
+            self.reset_page5()
             self.stackedWidget.setCurrentIndex(4)
 
     # 홈 이외의 창에서 홈 버튼을 누르면 홈 으로 이동
@@ -308,8 +404,8 @@ class User(QMainWindow, form_class):
         self.c = self.conn.cursor()
 
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    myWindow = User()
-    myWindow.show()
-    app.exec_()
+# if __name__ == "__main__":
+#     app = QApplication(sys.argv)
+#     myWindow = User()
+#     myWindow.show()
+#     app.exec_()

@@ -38,10 +38,12 @@ class WindowClass(QMainWindow, form_class):
 
     def program(self):
         if self.login_manager and self.login_state:
-            user_page.set_information(self.name)
+            manager_page.set_information(self.name)
+            manager_page.attendance()
             widget.setCurrentIndex(2)
         elif self.login_state:
-            manager_page.set_information(self.name)
+            user_page.set_information(self.name)
+            user_page.push_chang()
             widget.setCurrentIndex(1)
         else:
             QMessageBox.information(self, '안내창', '로그인 하세요')

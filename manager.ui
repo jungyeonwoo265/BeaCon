@@ -88,7 +88,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>숫자 * 건</string>
+      <string>1건</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_8">
@@ -127,7 +127,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>날짜 *, 시간 *</string>
+      <string>09:00:00~17:00:00</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_14">
@@ -209,7 +209,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>문자 *</string>
+      <string>데이터 기반 AI SW개발자 양성</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_3">
@@ -496,7 +496,7 @@
         <enum>QCalendarWidget::NoVerticalHeader</enum>
        </property>
        <property name="navigationBarVisible">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </widget>
@@ -516,68 +516,7 @@
       </widget>
      </widget>
     </widget>
-    <widget class="QLabel" name="label_57">
-     <property name="geometry">
-      <rect>
-       <x>380</x>
-       <y>590</y>
-       <width>31</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>년</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_58">
-     <property name="geometry">
-      <rect>
-       <x>490</x>
-       <y>590</y>
-       <width>31</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>월</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="cb_year_page3">
-     <property name="geometry">
-      <rect>
-       <x>300</x>
-       <y>590</y>
-       <width>76</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>2022</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>2023</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QComboBox" name="cb_month_page3">
-     <property name="geometry">
-      <rect>
-       <x>410</x>
-       <y>590</y>
-       <width>76</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <item>
-      <property name="text">
-       <string>01</string>
-      </property>
-     </item>
-    </widget>
-    <widget class="QLineEdit" name="lb_input_page3">
+    <widget class="QLineEdit" name="le_input_page3">
      <property name="geometry">
       <rect>
        <x>20</x>
