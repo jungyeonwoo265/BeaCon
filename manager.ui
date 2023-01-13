@@ -260,6 +260,12 @@
        <height>461</height>
       </rect>
      </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
     </widget>
     <widget class="QLabel" name="label_4">
      <property name="geometry">
@@ -324,6 +330,12 @@
        <height>361</height>
       </rect>
      </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
     </widget>
     <widget class="QLabel" name="label_16">
      <property name="geometry">
@@ -513,6 +525,12 @@
          <height>495</height>
         </rect>
        </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>true</bool>
+       </attribute>
       </widget>
      </widget>
     </widget>
@@ -619,9 +637,9 @@
     <widget class="QListWidget" name="list_page4">
      <property name="geometry">
       <rect>
-       <x>129</x>
+       <x>179</x>
        <y>60</y>
-       <width>651</width>
+       <width>601</width>
        <height>590</height>
       </rect>
      </property>
@@ -639,7 +657,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lb_input_page4">
+    <widget class="QLineEdit" name="le_input_page4">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -678,7 +696,7 @@
     <widget class="Line" name="line">
      <property name="geometry">
       <rect>
-       <x>110</x>
+       <x>160</x>
        <y>50</y>
        <width>20</width>
        <height>611</height>
@@ -706,10 +724,16 @@
       <rect>
        <x>20</x>
        <y>60</y>
-       <width>91</width>
+       <width>141</width>
        <height>591</height>
       </rect>
      </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
     </widget>
    </widget>
   </widget>

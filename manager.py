@@ -31,15 +31,12 @@ class Manager(QMainWindow, form_class):
         self.name = str
         self.today = str
         self.cal = list()
-        self.set_information("이상복")
-        self.table_page1.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.table_page1.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.table_page2.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.table_page2.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.set_information("이상복")
 
         # 메서드 호출
         self.today_set()
         self.reset_page3()
+        self.reset_page4()
 
         # 시그널 - 메서드
         self.cb_menu.currentIndexChanged.connect(self.page_move)
@@ -51,18 +48,77 @@ class Manager(QMainWindow, form_class):
         self.cb_name.currentIndexChanged.connect(self.tableset_page3)
         self.pb_input_page3.clicked.connect(self.input_page3)
         self.pb_delet_page3.clicked.connect(self.output_page3)
+        self.table_page4.cellClicked.connect(self.message)
+        self.le_input_page4.returnPressed.connect(self.input_message)
+        self.pb_delet_page4.clicked.connect(self.output_message)
 
-    # 일정 삭제하기
+    # 메세지 삭제 하기
+    def output_message(self):
+        text = self.list_page4.currentItem()
+        if text:
+            text = text.text()
+            message = text.split('/')
+            self.open_db()
+            self.c.execute(
+                f'delete from messenger where 보냄="{self.name}" and 시간="{message[1].strip()}" and 날짜=curdate();')
+            self.conn.commit()
+            self.conn.close()
+            self.message()
+
+    # 메세지 등록 하기
+    def input_message(self):
+        name = self.table_page4.currentItem()
+        if name:
+            text = self.le_input_page4.text()
+            if text:
+                name = name.text()
+                self.le_input_page4.clear()
+                self.open_db()
+                self.c.execute(f'insert into messenger values '
+                               f'(curdate(),"{self.name}", "{name}", curtime(), "{text}", "n");')
+                self.conn.commit()
+                self.conn.close()
+                self.message()
+
+    # 메신저 내용 보여 주기
+    def message(self):
+        name = self.table_page4.currentItem().text()
+        if name:
+            self.list_page4.clear()
+            self.open_db()
+            self.c.execute(f'select 보냄, 시간, 내용 from messenger where 날짜 > subdate(curdate(),1)'
+                           f'and (보냄 ="{name}" or 받음="{name}") order by 날짜;')
+            message = self.c.fetchall()
+            for i in message:
+                self.list_page4.addItem(f'{i[0]} / {i[1]} / {i[2]}')
+            self.conn.close()
+
+    # 메신저 명단 보여 주기
+    def reset_page4(self):
+        self.open_db()
+        self.c.execute(f'select name from user;')
+        name = self.c.fetchall()
+        self.table_page4.setRowCount(len(name))
+        self.table_page4.setColumnCount(len(name[0]))
+        self.table_page4.setHorizontalHeaderItem(0, QTableWidgetItem("이름"))
+        for i, le in enumerate(name):
+            for j, v in enumerate(le):
+                self.table_page4.setItem(i, j, QTableWidgetItem(v))
+        self.conn.close()
+
+    # 일정 삭제 하기 및 삭제 일정 캘린더 색 변경
     def output_page3(self):
         row = self.table_page3.currentRow()
         if row >= 0:
             name = self.cb_name.currentText()
             date = self.table_page3.item(row, 0).text()
             text = self.table_page3.item(row, 1).text()
+            # 캘린드 스타일 변경
             style1 = QTextCharFormat()
             style1.setBackground(Qt.white)
             cal_st = QDate.fromString(date, "yyyy-MM-dd")
             self.calendar_page3.setDateTextFormat(cal_st, style1)
+            # 일정 지우기
             self.open_db()
             self.c.execute(f'delete from calendar where 일정 ="{date}" and 내역 = "{text}" and 이름 = "{name}";')
             self.conn.commit()
@@ -124,10 +180,9 @@ class Manager(QMainWindow, form_class):
         self.today = self.c.fetchone()[0]
         self.conn.close()
 
-    # page3 초기화
+    # 콤보 박스 이름 셋팅
     def reset_page3(self):
         self.open_db()
-        # 콤보 박스 이름 셋팅
         self.c.execute(f'select name from user;')
         name = self.c.fetchall()
         for i in name:
@@ -195,6 +250,7 @@ class Manager(QMainWindow, form_class):
             self.table_page1.setHorizontalHeaderItem(i, QTableWidgetItem(v))
         self.conn.close()
 
+    # 각 페이지 이동 및 셋팅
     def page_move(self):
         page = self.cb_menu.currentText()
         self.cb_menu.setCurrentIndex(0)
@@ -210,19 +266,22 @@ class Manager(QMainWindow, form_class):
         elif page == '메신저':
             self.stackedWidget.setCurrentIndex(3)
 
+    # 홈 화면으로 이동
     def go_home(self):
         self.stackedWidget.setCurrentIndex(0)
 
+    # main.py 에서 관리자 이름 가져 오기
     def set_information(self, name):
         self.name = name
 
+    # DB 오픈하기
     def open_db(self):
         self.conn = p.connect(host='127.0.0.1', port=3306, user='root', password='0000', db='step6', charset='utf8')
         self.c = self.conn.cursor()
 
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    myWindow = Manager()
-    myWindow.show()
-    app.exec_()
+# if __name__ == "__main__":
+#     app = QApplication(sys.argv)
+#     myWindow = Manager()
+#     myWindow.show()
+#     app.exec_()

@@ -29,12 +29,7 @@ class User(QMainWindow, form_class):
         self.reset()
         # main.py 연결시 주석 처리
         # self.set_information('최지혁')
-        # page3
-        self.table_page3.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.table_page3.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        # page4
-        self.table_page4.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.table_page4.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
         # 시그널 - 메서드
         self.cb_menu.currentIndexChanged.connect(self.page_move)
         self.pb_home_page2.clicked.connect(self.go_home)
@@ -52,11 +47,12 @@ class User(QMainWindow, form_class):
 
     # page5 메세지 삭제
     def output_page5(self):
-        text = self.list_page5.currentItem().text()
+        text = self.list_page5.currentItem()
         if text:
+            text = text.text()
             message = text.split('/')
             self.open_db()
-            self.c.execute(f'delete from messenger where 보냄="{message[0].strip()}" and 시간="{message[1].strip()}" and 날짜=curdate();')
+            self.c.execute(f'delete from messenger where 보냄="{self.name}" and 시간="{message[1].strip()}" and 날짜=curdate();')
             self.conn.commit()
             self.conn.close()
             self.reset_page5()

@@ -30,6 +30,8 @@ class WindowClass(QMainWindow, form_class):
         # 시그널-메서드
         self.pb_loginpage.clicked.connect(self.go_login)
         self.pb_login_2.clicked.connect(self.login)
+        self.le_pw.returnPressed.connect(self.login)
+        self.le_id.returnPressed.connect(self.login)
         self.pb_beacon.clicked.connect(self.program)
 
     def open_db(self):
@@ -66,9 +68,9 @@ class WindowClass(QMainWindow, form_class):
         userid = self.le_id.text()
         password = self.le_pw.text()
         if userid and password:
-            self.c.execute(f'select name from user where id ="{userid}" and password = {password}')
+            self.c.execute(f'select name from user where id ="{userid}" and password = "{password}"')
             check = self.c.fetchone()
-            self.c.execute(f'select name from manager where id ="{userid}" and password = {password}')
+            self.c.execute(f'select name from manager where id ="{userid}" and password = "{password}"')
             manager = self.c.fetchone()
             if check and not manager:
                 self.le_id.clear()

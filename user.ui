@@ -997,6 +997,12 @@
          <height>355</height>
         </rect>
        </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>true</bool>
+       </attribute>
       </widget>
      </widget>
     </widget>
@@ -1090,6 +1096,12 @@
          <height>495</height>
         </rect>
        </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>true</bool>
+       </attribute>
       </widget>
      </widget>
     </widget>
