@@ -5,6 +5,7 @@ from PyQt5.QtGui import QTextCharFormat
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import pymysql as p
+from schedule import Schedule
 
 form_class = uic.loadUiType("user.ui")[0]
 
@@ -27,8 +28,9 @@ class User(QMainWindow, form_class):
         self.name = str
         self.state = tuple
         self.reset()
+        self.schadule = Schedule()
         # main.py 연결시 주석 처리
-        # self.set_information('최지혁')
+        # self.set_information('임홍선')
 
         # 시그널 - 메서드
         self.cb_menu.currentIndexChanged.connect(self.page_move)
@@ -291,6 +293,8 @@ class User(QMainWindow, form_class):
             self.c.execute(f'update attendance set 퇴실 = {self.time} where 이름 = "{self.name}" and 날짜 = {self.date};')
         self.conn.commit()
         self.conn.close()
+        if state == '입실':
+            self.schadule.show()
 
     # 출석 체크를 위해 시간및 버튼의 텍스트 변경
     def push_chang(self):
