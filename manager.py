@@ -28,13 +28,12 @@ class Manager(QMainWindow, form_class):
         self.user.roster()
 
         # self.변수 초기화 및 선언
+        self.date = 'curdate()'
         self.name = str
-        self.today = str
         self.cal = list()
         # self.set_information("이상복")
 
         # 메서드 호출
-        self.today_set()
         self.reset_page3()
         self.reset_page4()
 
@@ -60,7 +59,7 @@ class Manager(QMainWindow, form_class):
             message = text.split('/')
             self.open_db()
             self.c.execute(
-                f'delete from messenger where 보냄="{self.name}" and 시간="{message[1].strip()}" and 날짜=curdate();')
+                f'delete from messenger where 보냄="{self.name}" and 시간="{message[1].strip()}" and 날짜={self.date};')
             self.conn.commit()
             self.conn.close()
             self.message()
@@ -75,7 +74,7 @@ class Manager(QMainWindow, form_class):
                 self.le_input_page4.clear()
                 self.open_db()
                 self.c.execute(f'insert into messenger values '
-                               f'(curdate(),"{self.name}", "{name}", curtime(), "{text}", "n");')
+                               f'({self.date},"{self.name}", "{name}", curtime(), "{text}", "n");')
                 self.conn.commit()
                 self.conn.close()
                 self.message()
@@ -86,7 +85,7 @@ class Manager(QMainWindow, form_class):
         if name:
             self.list_page4.clear()
             self.open_db()
-            self.c.execute(f'select 보냄, 시간, 내용 from messenger where 날짜 > subdate(curdate(),1)'
+            self.c.execute(f'select 보냄, 시간, 내용 from messenger where 날짜 > subdate({self.date},1)'
                            f'and (보냄 ="{name}" or 받음="{name}") order by 날짜;')
             message = self.c.fetchall()
             for i in message:
@@ -157,7 +156,7 @@ class Manager(QMainWindow, form_class):
             style2 = QTextCharFormat()
             style2.setBackground(Qt.yellow)
             self.c.execute(f'select 일정, 내역 from calendar where 이름 ="{name}" '
-                           f'and 일정 > subdate(curdate(),1) order by 일정')
+                           f'and 일정 > subdate({self.date},1) order by 일정')
             cal = self.c.fetchall()
             self.table_page3.setRowCount(len(cal))
             self.table_page3.setColumnCount(len(cal[0]))
@@ -171,13 +170,6 @@ class Manager(QMainWindow, form_class):
             self.table_page3.clear()
             self.table_page3.setRowCount(0)
             self.table_page3.setColumnCount(0)
-        self.conn.close()
-
-    # 오늘 날짜 구하기
-    def today_set(self):
-        self.open_db()
-        self.c.execute('select curdate()')
-        self.today = self.c.fetchone()[0]
         self.conn.close()
 
     # 콤보 박스 이름 셋팅
@@ -196,7 +188,7 @@ class Manager(QMainWindow, form_class):
             self.open_db()
             self.c.execute(f'update notice set 상태 ="n" where 상태 ="y"')
             self.conn.commit()
-            self.c.execute(f'insert into notice values("{self.name}",curdate(),curtime(),"{text}","y")')
+            self.c.execute(f'insert into notice values("{self.name}",{self.date},curtime(),"{text}","y")')
             self.conn.commit()
             self.conn.close()
             self.notice()
@@ -235,19 +227,24 @@ class Manager(QMainWindow, form_class):
             self.lb_notice.setText('')
         self.conn.close()
 
+
     # page1 출석 확인 명단 만들기
     def attendance(self):
-        header = ['이름', '입실', '외출', '복귀', '퇴실']
         self.open_db()
-        self.c.execute(f'select 이름, 입실, 외출, 복귀, 퇴실 from attendance where 날짜 = curdate()')
-        atten = self.c.fetchall()
-        self.table_page1.setRowCount(len(atten))
-        self.table_page1.setColumnCount(len(atten[0]))
-        for i, le in enumerate(atten):
-            for j, v in enumerate(le):
-                self.table_page1.setItem(i, j, QTableWidgetItem(v))
-        for i, v in enumerate(header):
-            self.table_page1.setHorizontalHeaderItem(i, QTableWidgetItem(v))
+        self.c.execute(f'select count(*) from schedule where 날짜 = {self.date};')
+        check = self.c.fetchone()
+        self.check_class = check[0]
+        if self.check_class:
+            header = ['이름', '입실', '외출', '복귀', '퇴실']
+            self.c.execute(f'select 이름, 입실, 외출, 복귀, 퇴실 from attendance where 날짜 = {self.date}')
+            atten = self.c.fetchall()
+            self.table_page1.setRowCount(len(atten))
+            self.table_page1.setColumnCount(len(atten[0]))
+            for i, le in enumerate(atten):
+                for j, v in enumerate(le):
+                    self.table_page1.setItem(i, j, QTableWidgetItem(v))
+            for i, v in enumerate(header):
+                self.table_page1.setHorizontalHeaderItem(i, QTableWidgetItem(v))
         self.conn.close()
 
     # 각 페이지 이동 및 셋팅

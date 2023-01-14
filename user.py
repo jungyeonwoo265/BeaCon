@@ -54,7 +54,7 @@ class User(QMainWindow, form_class):
             text = text.text()
             message = text.split('/')
             self.open_db()
-            self.c.execute(f'delete from messenger where 보냄="{self.name}" and 시간="{message[1].strip()}" and 날짜=curdate();')
+            self.c.execute(f'delete from messenger where 보냄="{self.name}" and 시간="{message[1].strip()}" and 날짜={self.date};')
             self.conn.commit()
             self.conn.close()
             self.reset_page5()
@@ -65,7 +65,7 @@ class User(QMainWindow, form_class):
         self.le_input_page5.clear()
         if text:
             self.open_db()
-            self.c.execute(f'insert into messenger values (curdate(),"{self.name}", "이상복", curtime(), "{text}", "n");')
+            self.c.execute(f'insert into messenger values ({self.date},"{self.name}", "이상복", curtime(), "{text}", "n");')
             self.conn.commit()
             self.conn.close()
         self.reset_page5()
@@ -124,7 +124,7 @@ class User(QMainWindow, form_class):
     def tableset_page4(self):
         self.open_db()
         # 리스트 보기
-        self.c.execute(f'select count(*) from calendar where 이름 ="{self.name}"')
+        self.c.execute(f'select count(*) from calendar where 이름 ="{self.name}" and 일정 > subdate({self.date},1)')
         num = self.c.fetchone()[0]
         if num:
             # 캘린더 스타일 변경
@@ -214,7 +214,7 @@ class User(QMainWindow, form_class):
         self.conn.close()
 
     # 오늘 수업이 있는지 확인
-    def check_schecule(self):
+    def check_schedule(self):
         self.open_db()
         self.c.execute(f'select count(*) from schedule where 날짜 = {self.date};')
         check = self.c.fetchone()
@@ -267,7 +267,7 @@ class User(QMainWindow, form_class):
     def reset(self):
         self.lb_notice.setText('')
         self.lb_state.setText('입실전')
-        self.check_schecule()
+        self.check_schedule()
         self.roster()
         self.result()
         self.time_set()
